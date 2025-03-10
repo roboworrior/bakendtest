@@ -22,8 +22,8 @@ app.get('/test', async (req, res) => {
 
 app.post('/api/submit', async (req, res) => {  
     try {  
-        const { name, phone_number ,cart} = req.body;  
-        const result = await pool.query('INSERT INTO userinfo(name,phone_number,cart) VALUES ($1, $2,$3) RETURNING *',[name, phone_number,cart]);  
+        const { name, phone_number} = req.body;  
+        const result = await pool.query('INSERT INTO userinfo(name,phone_number,cart) VALUES ($1, $2,$3) RETURNING *',[name, phone_number]);  
 
         res.status(201).json(result.rows[0]);  
     } 

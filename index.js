@@ -1,12 +1,21 @@
-const express = require('express');  
-const pool = require('./db');  
-const cors = require('cors');  
+const express = require('express');
+const cors = require('cors');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+const pool = require('./db');
 
-const app = express();  
+const app = express();
 
-// Middleware  
-app.use(express.json());  
-app.use(cors());  
+// Apply CORS middleware
+app.use(cors({
+    origin: 'http://localhost:5173', // Allow requests from this origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific HTTP methods
+    credentials: true, // Allow cookies and credentials
+}));
+
+// Middleware to parse JSON
+app.use(express.json());
+
 // Example route 
 // Example route to test the database connection  
 

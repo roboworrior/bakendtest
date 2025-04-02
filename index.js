@@ -1,22 +1,12 @@
-const express = require('express');
-const cors = require('cors');
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
-const pool = require('./db');
+const express = require('express');  
+const pool = require('./db');  
+const cors = require('cors');  
 
-const app = express();
+const app = express();  
 
-// Apply CORS middleware
-app.use(cors({
-    origin: 'http://localhost:5173', // Allow requests from this origin
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific HTTP methods
-    credentials: true, // Allow cookies and credentials
-}));
-
-// Middleware to parse JSON
-app.use(express.json());
-
-// Example route 
+// Middleware  
+app.use(express.json());  
+app.use(cors());  
 // Example route to test the database connection  
 
 app.get('/test', async (req, res) => {  
@@ -95,36 +85,9 @@ app.post('/api/registor', async (req, res) => {
     }  
 }); 
 
-app.post('/api/upload', upload.single('image'), async (req, res) => {
-    // Set CORS headers
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
 
-    try {
-        const { id, title, price, catagory, codename, discription } = req.body;
-        const image = req.file;
-
-        if (!id || !title || !price || !catagory || !codename || !discription || !image) {
-            return res.status(400).json({ message: 'Missing required fields' });
-        }
-
-        const imgPath = `/uploads/${image.filename}`;
-
-        const result = await pool.query(
-            'INSERT INTO data(name, img, catagory, price, discr, codename, id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-            [title, imgPath, catagory, price, discription, codename, id]
-        );
-
-        res.status(201).json(result.rows[0]);
-    } catch (error) {
-        console.error('Error saving data:', error);
-        res.status(500).json({ message: 'Error saving data' });
-    }
-});
 
 const PORT = process.env.PORT || 3000;  
 app.listen(PORT, () => {  
   console.log(`Server running on port ${PORT}`);  
-});
+});  

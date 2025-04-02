@@ -1,14 +1,13 @@
 const express = require('express');  
 const pool = require('./db');  
 const cors = require('cors');  
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
 
 const app = express();  
 
 // Middleware  
-app.use(cors()); 
 app.use(express.json());  
+app.use(cors());  
+// Example route 
 // Example route to test the database connection  
 
 app.get('/test', async (req, res) => {  

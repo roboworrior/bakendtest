@@ -92,6 +92,12 @@ app.post('/api/registor', async (req, res) => {
 }); 
 
 app.post('/api/upload', upload.single('image'), async (req, res) => {
+    // Set CORS headers
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+
     try {
         const { id, title, price, catagory, codename, discription } = req.body;
         const image = req.file;
@@ -112,7 +118,7 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
         console.error('Error saving data:', error);
         res.status(500).json({ message: 'Error saving data' });
     }
-}); 
+});
 
 const PORT = process.env.PORT || 3000;  
 app.listen(PORT, () => {  

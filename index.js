@@ -87,22 +87,27 @@ app.post('/api/registor', async (req, res) => {
 
 app.post('/api/upload', async (req, res) => {  
     try {  
-        const { id,title,price,catagory,codename,discription} = req.body;  
-        const img = "https://img.freepik.com/free-vector/3d-rendering-abstract-background_23-2148821950.jpg?w=2000";   
-        const result = await pool.query('INSERT INTO data(name,img,catagory,price,discr,codename,id) VALUES ($1, $2,$3,$4,$5,$6,$7) RETURNING *',[title,img,catagory,price,discr,codename,id]);  
+        const { id, title, price, catagory, codename, discription } = req.body;  
+
+        if (!id || !title || !price || !catagory || !codename || !discription) {  
+            return res.status(400).json({ message: 'Missing required fields' });  
+        }  
+
+        const img = "https://img.freepik.com/free-vector/3d-rendering-abstract-background_23-2148821950.jpg?w=2000";  
+
+        const result = await pool.query(  
+            'INSERT INTO data(name, img, catagory, price, discr, codename, id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',  
+            [title, img, catagory, price, discription, codename, id]  
+        );  
 
         res.status(201).json(result.rows[0]);  
-    } 
-    
-    catch (error) {  
+    } catch (error) {  
         console.error('Error saving data:', error);  
         res.status(500).json({ message: 'Error saving data' });  
     }  
-}); 
-
-
+});  
 
 const PORT = process.env.PORT || 3000;  
 app.listen(PORT, () => {  
   console.log(`Server running on port ${PORT}`);  
-});  
+});

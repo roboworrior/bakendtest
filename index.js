@@ -1,6 +1,8 @@
 const express = require('express');  
 const pool = require('./db');  
 const cors = require('cors');  
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
 const app = express();  
 
@@ -85,27 +87,28 @@ app.post('/api/registor', async (req, res) => {
     }  
 }); 
 
-app.post('/api/upload', async (req, res) => {  
-    try {  
-        const { id, title, price, catagory, codename, discription } = req.body;  
+app.post('/api/upload', upload.single('image'), async (req, res) => {
+    try {
+        const { id, title, price, catagory, codename, discription } = req.body;
+        const image = req.file;
 
-        if (!id || !title || !price || !catagory || !codename || !discription) {  
-            return res.status(400).json({ message: 'Missing required fields' });  
-        }  
+        if (!id || !title || !price || !catagory || !codename || !discription || !image) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
 
-        const img = "https://img.freepik.com/free-vector/3d-rendering-abstract-background_23-2148821950.jpg?w=2000";  
+        const imgPath = `/uploads/${image.filename}`;
 
-        const result = await pool.query(  
-            'INSERT INTO data(name, img, catagory, price, discr, codename, id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',  
-            [title, img, catagory, price, discription, codename, id]  
-        );  
+        const result = await pool.query(
+            'INSERT INTO data(name, img, catagory, price, discr, codename, id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+            [title, imgPath, catagory, price, discription, codename, id]
+        );
 
-        res.status(201).json(result.rows[0]);  
-    } catch (error) {  
-        console.error('Error saving data:', error);  
-        res.status(500).json({ message: 'Error saving data' });  
-    }  
-});  
+        res.status(201).json(result.rows[0]);
+    } catch (error) {
+        console.error('Error saving data:', error);
+        res.status(500).json({ message: 'Error saving data' });
+    }
+}); 
 
 const PORT = process.env.PORT || 3000;  
 app.listen(PORT, () => {  

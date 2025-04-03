@@ -33,30 +33,26 @@ app.get('/data', async (req, res) => {
 });
 
 // Route to upload data
-app.post('/api/upload', upload.single('image'), async (req, res) => {
+app.post('/api/upload', async (req, res) => {
     try {
-        const { id, title, price, catagory, codename, discription } = req.body;
+        const { id, title, price, catagory, codename, discription, img } = req.body;
 
+        // Validate required fields
         if (!id || !title || !price || !catagory || !codename || !discription) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
-        const imgPath = req.file ? `/uploads/${req.file.filename}` : null;
+        // Use the provided `img` value or set a default image path
+        const imgPath = img || 'https://example.com/default-image.jpg';
 
-        let query = 'INSERT INTO data(name, catagory, price, discr, codename, id';
-        let values = [title, catagory, price, discription, codename, id];
-        let placeholders = '$1, $2, $3, $4, $5, $6';
+        // Construct the query
+        const query = 'INSERT INTO data(name, img, catagory, price, discr, codename, id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
+        const values = [title, imgPath, catagory, price, discription, codename, id];
 
-        if (imgPath) {
-            query += ', img';
-            values.push(imgPath);
-            placeholders += ', $7';
-        }
-
-        query += `) VALUES (${placeholders}) RETURNING *`;
-
+        // Execute the query
         const result = await pool.query(query, values);
 
+        // Respond with the inserted data
         res.status(201).json(result.rows[0]);
     } catch (error) {
         console.error('Error saving data:', error);

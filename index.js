@@ -1,8 +1,10 @@
 const express = require('express');  
 const pool = require('./db');  
 const cors = require('cors');  
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
-const app = express();  
+const app = express(); 
 
 // Middleware  
 app.use(express.json());  
@@ -31,7 +33,37 @@ app.get('/data', async (req, res) => {
   }  
 });  
 
+app.post('/api/upload', upload.single('image'), async (req, res) => {
+    try {
+        const { id, title, price, catagory, codename, discription } = req.body;
 
+        if (!id || !title || !price || !catagory || !codename || !discription) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
+        // Check if an image was uploaded
+        const imgPath = req.file ? `/uploads/${req.file.filename}` : null;
+
+        let query = 'INSERT INTO data(name, catagory, price, discr, codename, id';
+        let values = [title, catagory, price, discription, codename, id];
+        let placeholders = '$1, $2, $3, $4, $5, $6';
+
+        if (imgPath) {
+            query += ', img';
+            values.push(imgPath);
+            placeholders += ', $7';
+        }
+
+        query += `) VALUES (${placeholders}) RETURNING *`;
+
+        const result = await pool.query(query, values);
+
+        res.status(201).json(result.rows[0]);
+    } catch (error) {
+        console.error('Error saving data:', error);
+        res.status(500).json({ message: 'Error saving data' });
+    }
+});
 
 app.post('/api/submit', async (req, res) => {  
     try {  
@@ -90,4 +122,4 @@ app.post('/api/registor', async (req, res) => {
 const PORT = process.env.PORT || 3000;  
 app.listen(PORT, () => {  
   console.log(`Server running on port ${PORT}`);  
-});  
+});

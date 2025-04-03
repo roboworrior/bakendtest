@@ -1,8 +1,7 @@
 const express = require('express');
-const pool = require('../db'); // Adjust the path to your `db.js` file
+const pool = require('./db'); // Adjust the path to your `db.js` file
 const cors = require('cors');
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
 
 const app = express();
 

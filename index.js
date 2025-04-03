@@ -1,7 +1,7 @@
 const express = require('express');
 const pool = require('./db'); // Adjust the path to your `db.js` file
 const cors = require('cors');
-const multer = require('multer');
+
 
 const app = express();
 
@@ -32,32 +32,32 @@ app.get('/data', async (req, res) => {
 });
 
 // Route to upload data
-app.post('/api/upload', async (req, res) => {
-    try {
-        const { id, title, price, catagory, codename, discription, img } = req.body;
+// app.post('/api/upload', async (req, res) => {
+//     try {
+//         const { id, title, price, catagory, codename, discription, img } = req.body;
 
-        // Validate required fields
-        if (!id || !title || !price || !catagory || !codename || !discription) {
-            return res.status(400).json({ message: 'Missing required fields' });
-        }
+//         // Validate required fields
+//         if (!id || !title || !price || !catagory || !codename || !discription) {
+//             return res.status(400).json({ message: 'Missing required fields' });
+//         }
 
-        // Use the provided `img` value or set a default image path
-        const imgPath = img || 'https://example.com/default-image.jpg';
+//         // Use the provided `img` value or set a default image path
+//         const imgPath = img || 'https://example.com/default-image.jpg';
 
-        // Construct the query
-        const query = 'INSERT INTO data(name, img, catagory, price, discr, codename, id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
-        const values = [title, imgPath, catagory, price, discription, codename, id];
+//         // Construct the query
+//         const query = 'INSERT INTO data(name, img, catagory, price, discr, codename, id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
+//         const values = [title, imgPath, catagory, price, discription, codename, id];
 
-        // Execute the query
-        const result = await pool.query(query, values);
+//         // Execute the query
+//         const result = await pool.query(query, values);
 
-        // Respond with the inserted data
-        res.status(201).json(result.rows[0]);
-    } catch (error) {
-        console.error('Error saving data:', error);
-        res.status(500).json({ message: 'Error saving data' });
-    }
-});
+//         // Respond with the inserted data
+//         res.status(201).json(result.rows[0]);
+//     } catch (error) {
+//         console.error('Error saving data:', error);
+//         res.status(500).json({ message: 'Error saving data' });
+//     }
+// });
 
 // Export the app for Vercel
 module.exports = app;

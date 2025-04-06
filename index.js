@@ -4,6 +4,9 @@ const cors = require('cors');
 
 const app = express(); 
 
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+
 // Middleware  
 app.use(express.json());  
 app.use(cors());  
@@ -104,7 +107,8 @@ app.post('/api/registor', async (req, res) => {
     try {  
         const { username,password,email} = req.body;  
        
-        const result = await pool.query('INSERT INTO logindata(username,password,email) VALUES ($1, $2,$3) RETURNING *',[username,password,email]);  
+        const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
+        const result = await pool.query('INSERT INTO logindata(username,password,email) VALUES ($1, $2,$3) RETURNING *',[username,hashedPassword,email]);  
 
         res.status(201).json(result.rows[0]);  
     } 

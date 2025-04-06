@@ -107,8 +107,7 @@ app.post('/api/registor', async (req, res) => {
     try {  
         const { username,password,email} = req.body;  
        
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const result = await pool.query('INSERT INTO logindata(username,password,email) VALUES ($1, $2,$3) RETURNING *',[username,hashedPassword,email]);  
+       const result = await pool.query('INSERT INTO logindata(username,password,email) VALUES ($1, $2,$3) RETURNING *',[username,password,email]);  
 
         res.status(201).json(result.rows[0]);  
     } 

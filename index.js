@@ -1,11 +1,8 @@
 const express = require('express');  
 const pool = require('./db');  
 const cors = require('cors');  
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
 
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+
 const app = express(); 
 
 // Middleware  
@@ -35,7 +32,7 @@ app.get('/data', async (req, res) => {
   }  
 });  
 
-app.post('/api/upload', upload.single('image'), async (req, res) => {
+app.post('/api/upload', async (req, res) => {
     try {
         const { id, title, price, catagory, codename, discription } = req.body;
 
@@ -44,7 +41,7 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
         }
 
         // Check if an image was uploaded
-        const imgPath = req.file ? `/uploads/${req.file.filename}` : null;
+        const imgPath = null;
 
         let query = 'INSERT INTO data(name, catagory, price, discr, codename, id';
         let values = [title, catagory, price, discription, codename, id];
@@ -130,6 +127,7 @@ app.post('/api/registor', async (req, res) => {
         res.status(500).json({ message: 'Error saving data' });  
     }  
 }); 
+
 
 
 

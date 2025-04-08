@@ -1,8 +1,11 @@
 const express = require('express');  
 const pool = require('./db');  
 const cors = require('cors');  
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
-
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const app = express(); 
 
 // Middleware  
@@ -32,7 +35,7 @@ app.get('/data', async (req, res) => {
   }  
 });  
 
-app.post('/api/upload', async (req, res) => {
+app.post('/api/upload', upload.single('image'), async (req, res) => {
     try {
         const { id, title, price, catagory, codename, discription } = req.body;
 
@@ -41,7 +44,7 @@ app.post('/api/upload', async (req, res) => {
         }
 
         // Check if an image was uploaded
-        const imgPath = null;
+        const imgPath = req.file ? `/uploads/${req.file.filename}` : null;
 
         let query = 'INSERT INTO data(name, catagory, price, discr, codename, id';
         let values = [title, catagory, price, discription, codename, id];
@@ -86,13 +89,23 @@ app.post('/api/login', async (req, res) => {
        
         // const result = await pool.query('INSERT INTO logindata(email,password) VALUES ($1, $2) RETURNING *',[email,password]);  
 
-        const user = await pool.query('SELECT * FROM logindata WHERE email = $1', [email]);
-        
-        if (user.rows.length === 0) {
-            return res.status(401).json({ message: 'Invalid email or password' });
-        }
-        alert("dsfdsf");
-        
+         // Check if the user exists
+         const user = await pool.query('SELECT * FROM logindata WHERE email = $1', [email]);
+
+         if (user.rows.length === 0) {
+             return res.status(401).json({ message: 'Invalid email or password' });
+         }
+ 
+         // Compare the provided password with the hashed password
+         const validPassword = await bcrypt.compare(password, user.rows[0].password);
+ 
+         if (!validPassword) {
+             return res.status(401).json({ message: 'Invalid email or password' });
+         }
+         
+         res.status(200).json({ message: 'Login successful', user: user.rows[0] });
+   
+         
     } 
     
     catch (error) {  
@@ -105,7 +118,9 @@ app.post('/api/registor', async (req, res) => {
     try {  
         const { username,password,email} = req.body;  
        
-       const result = await pool.query('INSERT INTO logindata(username,password,email) VALUES ($1, $2,$3) RETURNING *',[username,password,email]);  
+        const hashedPassword = await bcrypt.hash(password,10); // Hash the password
+
+        const result = await pool.query('INSERT INTO logindata(username,password,email) VALUES ($1, $2,$3) RETURNING *',[username,hashedPassword,email]);  
 
         res.status(201).json(result.rows[0]);  
     } 

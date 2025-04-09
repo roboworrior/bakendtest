@@ -4,17 +4,18 @@ const cors = require('cors');
 
 // const multer = require('multer');
 // const upload = multer({ dest: 'uploads/' }); // Temporary storage for uploaded files
-// const cloudinary = require('cloudinary').v2;
+
+const cloudinary = require('cloudinary').v2;
 
 const bcrypt = require('bcrypt');
 const app = express(); 
 
 
-// cloudinary.config({
-//     cloud_name: 'dmggc4lcn',
-//     api_key: '754923437147375',
-//     api_secret: 'gg0oFpon86daeGYMkSImRdDUVik',
-// });
+cloudinary.config({
+    cloud_name: 'dmggc4lcn',
+    api_key: '754923437147375',
+    api_secret: 'gg0oFpon86daeGYMkSImRdDUVik',
+});
 
 // Middleware  
 app.use(express.json());  

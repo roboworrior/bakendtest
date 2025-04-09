@@ -2,6 +2,9 @@ const express = require('express');
 const pool = require('./db');  
 const cors = require('cors');  
 
+const bcrypt = require('bcrypt');
+const app = express(); 
+
 const multer = require('multer');
 
 // const upload = multer({
@@ -11,15 +14,13 @@ const multer = require('multer');
 
 // const cloudinary = require('cloudinary').v2;
 
-// const bcrypt = require('bcrypt');
-// const app = express(); 
 
 
-cloudinary.config({
-    cloud_name: 'dmggc4lcn',
-    api_key: '754923437147375',
-    api_secret: 'gg0oFpon86daeGYMkSImRdDUVik',
-});
+// cloudinary.config({
+//     cloud_name: 'dmggc4lcn',
+//     api_key: '754923437147375',
+//     api_secret: 'gg0oFpon86daeGYMkSImRdDUVik',
+// });
 
 // Middleware  
 app.use(express.json());  

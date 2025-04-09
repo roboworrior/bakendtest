@@ -1,19 +1,21 @@
 const express = require('express');  
 const pool = require('./db');  
 const cors = require('cors');  
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' }); // Temporary storage for uploaded files
+
+// const multer = require('multer');
+// const upload = multer({ dest: 'uploads/' }); // Temporary storage for uploaded files
+// const cloudinary = require('cloudinary').v2;
 
 const bcrypt = require('bcrypt');
 const app = express(); 
 
-const cloudinary = require('cloudinary').v2;
 
-cloudinary.config({
-    cloud_name: 'dmggc4lcn',
-    api_key: '754923437147375',
-    api_secret: 'gg0oFpon86daeGYMkSImRdDUVik',
-});
+// cloudinary.config({
+//     cloud_name: 'dmggc4lcn',
+//     api_key: '754923437147375',
+//     api_secret: 'gg0oFpon86daeGYMkSImRdDUVik',
+// });
+
 // Middleware  
 app.use(express.json());  
 app.use(cors());  
@@ -41,34 +43,34 @@ app.get('/data', async (req, res) => {
   }  
 });  
 
-app.post('/api/upload', upload.single('image'), async (req, res) => {
-    try {
-        const { id, title, price, catagory, codename, discription } = req.body;
+// app.post('/api/upload', upload.single('image'), async (req, res) => {
+//     try {
+//         const { id, title, price, catagory, codename, discription } = req.body;
 
-        if (!id || !title || !price || !catagory || !codename || !discription) {
-            return res.status(400).json({ message: 'Missing required fields' });
-        }
+//         if (!id || !title || !price || !catagory || !codename || !discription) {
+//             return res.status(400).json({ message: 'Missing required fields' });
+//         }
 
-        let imgUrl = null;
+//         let imgUrl = null;
 
-        if (req.file) {
-            // Upload the image to Cloudinary
-            const result = await cloudinary.uploader.upload(req.file.path);
-            imgUrl = result.secure_url; // Get the URL of the uploaded image
-        }
+//         if (req.file) {
+//             // Upload the image to Cloudinary
+//             const result = await cloudinary.uploader.upload(req.file.path);
+//             imgUrl = result.secure_url; // Get the URL of the uploaded image
+//         }
 
-        // Save the data to your database
-        const query = 'INSERT INTO data(name, img, catagory, price, discr, codename, id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
-        const values = [title, imgUrl, catagory, price, discription, codename, id];
+//         // Save the data to your database
+//         const query = 'INSERT INTO data(name, img, catagory, price, discr, codename, id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
+//         const values = [title, imgUrl, catagory, price, discription, codename, id];
 
-        const dbResult = await pool.query(query, values);
+//         const dbResult = await pool.query(query, values);
 
-        res.status(201).json(dbResult.rows[0]);
-    } catch (error) {
-        console.error('Error saving data:', error);
-        res.status(500).json({ message: 'Error saving data' });
-    }
-});
+//         res.status(201).json(dbResult.rows[0]);
+//     } catch (error) {
+//         console.error('Error saving data:', error);
+//         res.status(500).json({ message: 'Error saving data' });
+//     }
+// });
 
 app.post('/api/submit', async (req, res) => {  
     try {  

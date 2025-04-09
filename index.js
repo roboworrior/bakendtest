@@ -2,8 +2,8 @@ const express = require('express');
 const pool = require('./db');  
 const cors = require('cors');  
 
-// const multer = require('multer');
-// const upload = multer({ dest: 'uploads/' }); // Temporary storage for uploaded files
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' }); // Temporary storage for uploaded files
 
 const cloudinary = require('cloudinary').v2;
 

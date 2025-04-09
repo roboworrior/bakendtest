@@ -1,10 +1,19 @@
 const express = require('express');  
 const pool = require('./db');  
 const cors = require('cors');  
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' }); // Temporary storage for uploaded files
 
 const bcrypt = require('bcrypt');
 const app = express(); 
 
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+    cloud_name: 'dmggc4lcn',
+    api_key: '754923437147375',
+    api_secret: 'gg0oFpon86daeGYMkSImRdDUVik',
+});
 // Middleware  
 app.use(express.json());  
 app.use(cors());  
@@ -32,7 +41,7 @@ app.get('/data', async (req, res) => {
   }  
 });  
 
-app.post('/api/upload', async (req, res) => {
+app.post('/api/upload', upload.single('image'), async (req, res) => {
     try {
         const { id, title, price, catagory, codename, discription } = req.body;
 
@@ -40,24 +49,21 @@ app.post('/api/upload', async (req, res) => {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
-        // Check if an image was uploaded
-        const imgPath = null;
+        let imgUrl = null;
 
-        let query = 'INSERT INTO data(name, catagory, price, discr, codename, id';
-        let values = [title, catagory, price, discription, codename, id];
-        let placeholders = '$1, $2, $3, $4, $5, $6';
-
-        if (imgPath) {
-            query += ', img';
-            values.push(imgPath);
-            placeholders += ', $7';
+        if (req.file) {
+            // Upload the image to Cloudinary
+            const result = await cloudinary.uploader.upload(req.file.path);
+            imgUrl = result.secure_url; // Get the URL of the uploaded image
         }
 
-        query += `) VALUES (${placeholders}) RETURNING *`;
+        // Save the data to your database
+        const query = 'INSERT INTO data(name, img, catagory, price, discr, codename, id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
+        const values = [title, imgUrl, catagory, price, discription, codename, id];
 
-        const result = await pool.query(query, values);
+        const dbResult = await pool.query(query, values);
 
-        res.status(201).json(result.rows[0]);
+        res.status(201).json(dbResult.rows[0]);
     } catch (error) {
         console.error('Error saving data:', error);
         res.status(500).json({ message: 'Error saving data' });

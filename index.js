@@ -4,15 +4,15 @@ const cors = require('cors');
 
 const multer = require('multer');
 
-const upload = multer({
-    dest: 'uploads/',
-    limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
-});
+// const upload = multer({
+//     dest: 'uploads/',
+//     limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+// });
 
-const cloudinary = require('cloudinary').v2;
+// const cloudinary = require('cloudinary').v2;
 
-const bcrypt = require('bcrypt');
-const app = express(); 
+// const bcrypt = require('bcrypt');
+// const app = express(); 
 
 
 cloudinary.config({

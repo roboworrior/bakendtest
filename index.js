@@ -3,7 +3,11 @@ const pool = require('./db');
 const cors = require('cors');  
 
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' }); // Temporary storage for uploaded files
+
+const upload = multer({
+    dest: 'uploads/',
+    limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+});
 
 const cloudinary = require('cloudinary').v2;
 

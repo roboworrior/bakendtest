@@ -7,8 +7,9 @@ const app = express();
 
 const multer = require('multer');
 
+// Configure multer to use memory storage
 const upload = multer({
-    dest: 'uploads/',
+    storage: multer.memoryStorage(),
     limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
 });
 
@@ -47,44 +48,50 @@ app.get('/data', async (req, res) => {
   }  
 });  
 
-const fs = require('fs'); // For file system operations
 
 app.post('/upload', upload.single('image'), async (req, res) => {
-    try {
-        const { id, title, price, catagory, codename, discription } = req.body;
+  try {
+      const { id, title, price, catagory, codename, discription } = req.body;
 
-        if (!id || !title || !price || !catagory || !codename || !discription) {
-            return res.status(400).json({ message: 'Missing required fields' });
-        }
+      if (!id || !title || !price || !catagory || !codename || !discription) {
+          return res.status(400).json({ message: 'Missing required fields' });
+      }
 
-        let imgUrl = null;
+      let imgUrl = null;
 
-        if (req.file) {
-            console.log('Uploading file to Cloudinary...');
-            const result = await cloudinary.uploader.upload(req.file.path);
-            imgUrl = result.secure_url; // Get the URL of the uploaded image
-            console.log('File uploaded to Cloudinary:', imgUrl);
+      if (req.file) {
+          console.log('Uploading file to Cloudinary...');
+          const result = await cloudinary.uploader.upload_stream(
+              { folder: 'uploads' }, // Optional: Specify a folder in Cloudinary
+              (error, result) => {
+                  if (error) {
+                      console.error('Cloudinary upload error:', error);
+                      return res.status(500).json({ message: 'Cloudinary upload failed' });
+                  }
+                  imgUrl = result.secure_url; // Get the URL of the uploaded image
+                  console.log('File uploaded to Cloudinary:', imgUrl);
 
-            // Delete the temporary file after uploading to Cloudinary
-            fs.unlink(req.file.path, (err) => {
-                if (err) {
-                    console.error('Error deleting temporary file:', err);
-                }
-            });
-        }
+                  // Save the data to your database
+                  const query = 'INSERT INTO data(name, img, catagory, price, discr, codename, id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
+                  const values = [title, imgUrl, catagory, price, discription, codename, id];
 
-        // Save the data to your database
-        const query = 'INSERT INTO data(name, img, catagory, price, discr, codename, id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
-        const values = [title, imgUrl, catagory, price, discription, codename, id];
-
-        const dbResult = await pool.query(query, values);
-        console.log('Data saved to database:', dbResult.rows[0]);
-
-        res.status(201).json(dbResult.rows[0]);
-    } catch (error) {
-        console.error('Error in /upload:', error);
-        res.status(500).json({ message: 'Error saving data' });
-    }
+                  pool.query(query, values, (err, dbResult) => {
+                      if (err) {
+                          console.error('Database error:', err);
+                          return res.status(500).json({ message: 'Database error' });
+                      }
+                      res.status(201).json(dbResult.rows[0]);
+                  });
+              }
+          );
+          result.end(req.file.buffer); // Pass the file buffer to Cloudinary
+      } else {
+          return res.status(400).json({ message: 'No file uploaded' });
+      }
+  } catch (error) {
+      console.error('Error in /upload:', error);
+      res.status(500).json({ message: 'Error saving data' });
+  }
 });
 
 app.post('/api/submit', async (req, res) => {  

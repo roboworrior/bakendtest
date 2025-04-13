@@ -5,20 +5,20 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const app = express(); 
 
-// const multer = require('multer');
+const multer = require('multer');
 
-// const upload = multer({
-//     dest: 'uploads/',
-//     limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
-// });
+const upload = multer({
+    dest: 'uploads/',
+    limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+});
 
-// const cloudinary = require('cloudinary').v2;
+const cloudinary = require('cloudinary').v2;
 
-// cloudinary.config({
-//     cloud_name: 'dmggc4lcn', // Replace with your Cloudinary cloud name
-//     api_key: '754923437147375', // Replace with your Cloudinary API key
-//     api_secret: 'gg0oFpon86daeGYMkSImRdDUVik', // Replace with your Cloudinary API secret
-// });
+cloudinary.config({
+    cloud_name: 'dmggc4lcn', // Replace with your Cloudinary cloud name
+    api_key: '754923437147375', // Replace with your Cloudinary API key
+    api_secret: 'gg0oFpon86daeGYMkSImRdDUVik', // Replace with your Cloudinary API secret
+});
 
 // Middleware  
 app.use(express.json());  
@@ -47,36 +47,44 @@ app.get('/data', async (req, res) => {
   }  
 });  
 
-app.post('/api/upload', async (req, res) => {
-  try {
-      const { id, title, price, catagory, codename, discription } = req.body;
+const fs = require('fs'); // For file system operations
 
-      if (!id || !title || !price || !catagory || !codename || !discription) {
-          return res.status(400).json({ message: 'Missing required fields' });
-      }
+app.post('/upload', upload.single('image'), async (req, res) => {
+    try {
+        const { id, title, price, catagory, codename, discription } = req.body;
 
-      // Check if an image was uploaded
-      const imgPath = null;
+        if (!id || !title || !price || !catagory || !codename || !discription) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
 
-      let query = 'INSERT INTO data(name, catagory, price, discr, codename, id';
-      let values = [title, catagory, price, discription, codename, id];
-      let placeholders = '$1, $2, $3, $4, $5, $6';
+        let imgUrl = null;
 
-      if (imgPath) {
-          query += ', img';
-          values.push(imgPath);
-          placeholders += ', $7';
-      }
+        if (req.file) {
+            console.log('Uploading file to Cloudinary...');
+            const result = await cloudinary.uploader.upload(req.file.path);
+            imgUrl = result.secure_url; // Get the URL of the uploaded image
+            console.log('File uploaded to Cloudinary:', imgUrl);
 
-      query += `) VALUES (${placeholders}) RETURNING *`;
+            // Delete the temporary file after uploading to Cloudinary
+            fs.unlink(req.file.path, (err) => {
+                if (err) {
+                    console.error('Error deleting temporary file:', err);
+                }
+            });
+        }
 
-      const result = await pool.query(query, values);
+        // Save the data to your database
+        const query = 'INSERT INTO data(name, img, catagory, price, discr, codename, id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
+        const values = [title, imgUrl, catagory, price, discription, codename, id];
 
-      res.status(201).json(result.rows[0]);
-  } catch (error) {
-      console.error('Error saving data:', error);
-      res.status(500).json({ message: 'Error saving data' });
-  }
+        const dbResult = await pool.query(query, values);
+        console.log('Data saved to database:', dbResult.rows[0]);
+
+        res.status(201).json(dbResult.rows[0]);
+    } catch (error) {
+        console.error('Error in /upload:', error);
+        res.status(500).json({ message: 'Error saving data' });
+    }
 });
 
 app.post('/api/submit', async (req, res) => {  

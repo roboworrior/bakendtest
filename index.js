@@ -47,26 +47,36 @@ app.get('/data', async (req, res) => {
   }  
 });  
 
-app.post('/api/upload',(req, res) => {
-    try {
-        const { id, title, price, catagory, codename, discription } = req.body;
+app.post('/api/upload', async (req, res) => {
+  try {
+      const { id, title, price, catagory, codename, discription } = req.body;
 
-        if (!id || !title || !price || !catagory || !codename || !discription) {
-            return res.status(400).json({ message: 'Missing required fields' });
-        }
+      if (!id || !title || !price || !catagory || !codename || !discription) {
+          return res.status(400).json({ message: 'Missing required fields' });
+      }
 
+      // Check if an image was uploaded
+      const imgPath = null;
 
-        // Save the data to your database
-        const query = 'INSERT INTO data(name,catagory, price, discr, codename, id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
-        const values = [title, catagory, price, discription, codename, id];
+      let query = 'INSERT INTO data(name, catagory, price, discr, codename, id';
+      let values = [title, catagory, price, discription, codename, id];
+      let placeholders = '$1, $2, $3, $4, $5, $6';
 
-        const dbResult = pool.query(query, values);
+      if (imgPath) {
+          query += ', img';
+          values.push(imgPath);
+          placeholders += ', $7';
+      }
 
-        res.status(201).json(dbResult.rows[0]);
-    } catch (error) {
-        console.error('Error saving data:', error);
-        res.status(500).json({ message: 'Error saving data' });
-    }
+      query += `) VALUES (${placeholders}) RETURNING *`;
+
+      const result = await pool.query(query, values);
+
+      res.status(201).json(result.rows[0]);
+  } catch (error) {
+      console.error('Error saving data:', error);
+      res.status(500).json({ message: 'Error saving data' });
+  }
 });
 
 app.post('/api/submit', async (req, res) => {  

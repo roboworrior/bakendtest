@@ -16,9 +16,9 @@ const upload = multer({
 const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
-    cloud_name: 'dmggc4lcn', // Replace with your Cloudinary cloud name
-    api_key: '754923437147375', // Replace with your Cloudinary API key
-    api_secret: 'gg0oFpon86daeGYMkSImRdDUVik', // Replace with your Cloudinary API secret
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Replace with your Cloudinary cloud name
+    api_key: process.env.CLOUDINARY_API_KEY , // Replace with your Cloudinary API key
+    api_secret: process.env.CLOUDINARY_API_SECRET, // Replace with your Cloudinary API secret
 });
 
 // Middleware  

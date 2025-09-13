@@ -40,7 +40,7 @@ app.use(cors({
 
 app.get('/test', async (req, res) => {  
 
-      console.log('💥 This is the updated API');
+    console.log('💥 This is the updated API');
     const origin = req.headers.origin;
     const apiKey = req.headers['x-api-key'];
 
@@ -70,6 +70,7 @@ app.get('/test', async (req, res) => {
 app.get('/data', async (req, res) => {
   const origin = req.headers.origin;
   const apiKey = req.headers['x-api-key'];
+  console.log('💥 This is the updated API');
 
   // 🛑 Origin check
   if (origin !== ALLOWED_ORIGIN) {

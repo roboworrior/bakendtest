@@ -23,8 +23,8 @@ cloudinary.config({
 
 // Middleware  
 app.use(express.json());  
-app.use(cors());  
-// Example route to test the database connection  
+app.use(cors({ origin: "https://apbyte.com/" }));  
+
 
 app.get('/test', async (req, res) => {  
   try {  

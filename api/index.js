@@ -45,15 +45,17 @@ app.get('/order', async (req, res) => {
     const apiKey = req.headers['x-api-key'];
 
     // 🛑 Origin check
-  if (origin !== ALLOWED_ORIGIN) {
-    return res.status(403).json({ message: 'Access denied: Invalid origin' });
+  if (!origin || origin !== ALLOWED_ORIGIN) {
+  console.log(`🚫 Blocked origin: ${origin}`);
+  return res.status(403).json({ message: 'Access denied: Invalid origin' });
   }
 
+  
   // 🛑 API key check
   if (apiKey !== SECURE_API_KEY) {
-    return res.status(403).json({ message: 'Access denied: Invalid API key' });
-  }
-
+  console.log(`🚫 Invalid API Key: ${apiKey}`);
+  return res.status(403).json({ message: 'Access denied: Invalid API key' });
+}
 
   try {  
     const result = await pool.query('SELECT * FROM userinfo');  
@@ -72,15 +74,18 @@ app.get('/data', async (req, res) => {
   const apiKey = req.headers['x-api-key'];
   console.log('💥 This is the upddated API');
 
-  // 🛑 Origin check
-  if (origin !== ALLOWED_ORIGIN) {
-    return res.status(403).json({ message: 'Access denied: Invalid origin' });
+   // 🛑 Origin check
+  if (!origin || origin !== ALLOWED_ORIGIN) {
+  console.log(`🚫 Blocked origin: ${origin}`);
+  return res.status(403).json({ message: 'Access denied: Invalid origin' });
   }
 
+  
   // 🛑 API key check
   if (apiKey !== SECURE_API_KEY) {
-    return res.status(403).json({ message: 'Access denied: Invalid API key' });
-  }
+  console.log(`🚫 Invalid API Key: ${apiKey}`);
+  return res.status(403).json({ message: 'Access denied: Invalid API key' });
+}
 
   try {
     const result = await pool.query('SELECT * FROM data');

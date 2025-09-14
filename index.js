@@ -23,8 +23,11 @@ cloudinary.config({
 
 // Middleware  
 app.use(express.json());  
-app.use(cors({ origin: "https://apbyte.com/" }));  
 
+app.use(cors({
+    origin: 'https://apbyte.com/',
+    methods: ['GET', 'POST'], // or ['GET', 'POST'] etc.
+}));
 
 app.get('/test', async (req, res) => {  
   try {  

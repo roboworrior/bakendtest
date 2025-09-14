@@ -13,6 +13,10 @@ const upload = multer({
     limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
 });
 
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN;
+const SECURE_API_KEY = process.env.SECURE_API_KEY; 
+
+
 const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
@@ -24,13 +28,31 @@ cloudinary.config({
 // Middleware  
 app.use(express.json());  
 
-const allowedOrigin = 'https://apbyte.com';
 app.use(cors({
-    origin: allowedOrigin,
-    methods: ['GET', 'POST'], // or ['GET', 'POST'] etc.
+    origin: ALLOWED_ORIGIN,
+    methods: ['POST','GET'],
+    credentials: true, // if using cookies/session
 }));
 
+
+
+// Example route to test the database connection  
+
 app.get('/test', async (req, res) => {  
+    const origin = req.headers.origin;
+    const apiKey = req.headers['x-api-key'];
+
+    // 🛑 Origin check
+  if (origin !== ALLOWED_ORIGIN) {
+    return res.status(403).json({ message: 'Access denied: Invalid origin' });
+  }
+
+  // 🛑 API key check
+  if (apiKey !== SECURE_API_KEY) {
+    return res.status(403).json({ message: 'Access denied: Invalid API key' });
+  }
+
+
   try {  
     const result = await pool.query('SELECT * FROM userinfo');  
     res.json(result.rows);  
@@ -41,16 +63,31 @@ app.get('/test', async (req, res) => {
   }  
 });  
 
-app.get('/data', async (req, res) => {  
-  try {  
-    const result = await pool.query('SELECT * FROM data');  
-    res.json(result.rows);  
 
-  } catch (err) {  
-    console.error(err);  
-    res.status(500).json({ message: 'Database error' });  
-  }  
-});  
+
+app.get('/data', async (req, res) => {
+  const origin = req.headers.origin;
+  const apiKey = req.headers['x-api-key'];
+
+  // 🛑 Origin check
+  if (origin !== ALLOWED_ORIGIN) {
+    return res.status(403).json({ message: 'Access denied: Invalid origin' });
+  }
+
+  // 🛑 API key check
+  if (apiKey !== SECURE_API_KEY) {
+    return res.status(403).json({ message: 'Access denied: Invalid API key' });
+  }
+
+  try {
+    const result = await pool.query('SELECT * FROM data');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Database error' });
+  }
+});
+
 
 
 app.post('/upload', upload.single('image'), async (req, res) => {

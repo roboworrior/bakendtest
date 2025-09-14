@@ -1,5 +1,5 @@
 const express = require('express');  
-const pool = require('./db');  
+const pool = require('../bakendtest/db');  
 const cors = require('cors');  
 
 const bcrypt = require('bcrypt');

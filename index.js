@@ -24,8 +24,9 @@ cloudinary.config({
 // Middleware  
 app.use(express.json());  
 
+const allowedOrigin = ''https://apbyte.com';
 app.use(cors({
-    origin: 'https://apbyte.com/',
+    origin: allowedOrigin,
     methods: ['GET', 'POST'], // or ['GET', 'POST'] etc.
 }));
 

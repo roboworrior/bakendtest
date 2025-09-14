@@ -38,7 +38,7 @@ app.use(cors({
 
 // Example route to test the database connection  
 
-app.get('/test', async (req, res) => {  
+app.get('/order', async (req, res) => {  
 
     console.log('💥 This is the updated API');
     const origin = req.headers.origin;

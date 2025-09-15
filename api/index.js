@@ -75,12 +75,6 @@ app.get('/data', async (req, res) => {
   console.log('💥 This is the upddated API');
 
    
-  
-  // 🛑 API key check
-  if (apiKey !== SECURE_API_KEY) {
-  console.log(`🚫 Invalid API Key: ${apiKey}`);
-  return res.status(403).json({ message: 'Access denied: Invalid API key' });
-}
 
   try {
     const result = await pool.query('SELECT * FROM data');

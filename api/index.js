@@ -16,6 +16,22 @@ const upload = multer({
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN;
 const SECURE_API_KEY = process.env.SECURE_API_KEY; 
 
+const validateRequest = (req, res, next) => {
+    const origin = req.headers.origin;
+    const apiKey = req.headers['x-api-key'];
+
+    if (origin && origin !== process.env.ALLOWED_ORIGIN) {
+        console.log(`🚫 Blocked origin: ${origin}`);
+        return res.status(403).json({ message: 'Access denied: Invalid origin' });
+    }
+
+    if (apiKey !== process.env.SECURE_API_KEY) {
+        console.log(`🚫 Invalid API Key: ${apiKey}`);
+        return res.status(403).json({ message: 'Access denied: Invalid API key' });
+    }
+
+    next();
+};
 
 const cloudinary = require('cloudinary').v2;
 
@@ -38,43 +54,25 @@ app.use(cors({
 
 // Example route to test the database connection  
 
-app.get('/order', async (req, res) => {  
+app.get('/order',validateRequest, async (req, res) => {  
 
     console.log('💥 This is the updated API');
-    const origin = req.headers.origin;
-    const apiKey = req.headers['x-api-key'];
-
-    // 🛑 Origin check
-  if (!origin || origin !== ALLOWED_ORIGIN) {
-  console.log(`🚫 Blocked origin: ${origin}`);
-  return res.status(403).json({ message: 'Access denied: Invalid origin' });
-  }
-
-  
-  // 🛑 API key check
-  if (apiKey !== SECURE_API_KEY) {
-  console.log(`🚫 Invalid API Key: ${apiKey}`);
-  return res.status(403).json({ message: 'Access denied: Invalid API key' });
-}
-
-  try {  
-    const result = await pool.query('SELECT * FROM userinfo');  
-    res.json(result.rows);  
-
-  } catch (err) {  
-    console.error(err);  
-    res.status(500).json({ message: 'Database error' });  
-  }  
+    
+      try {  
+        const result = await pool.query('SELECT * FROM userinfo');  
+        res.json(result.rows);  
+    
+      } catch (err) {  
+        console.error(err);  
+        res.status(500).json({ message: 'Database error' });  
+      }  
 });  
 
 
 
-app.get('/data', async (req, res) => {
-  const origin = req.headers.origin;
-  const apiKey = req.headers['x-api-key'];
+app.get('/data', validateRequest,async (req, res) => {
   console.log('💥 This is the upddated API');
 
-   
 
   try {
     const result = await pool.query('SELECT * FROM data');

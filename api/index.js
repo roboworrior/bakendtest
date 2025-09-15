@@ -14,7 +14,7 @@ const upload = multer({
 });
 
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN;
-const SECURE_API_KEY = process.env.REACT_APP_API_KEY; 
+const SECURE_API_KEY = process.env.SECURE_API_KEY; 
 
 
 const cloudinary = require('cloudinary').v2;

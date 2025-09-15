@@ -74,12 +74,7 @@ app.get('/data', async (req, res) => {
   const apiKey = req.headers['x-api-key'];
   console.log('💥 This is the upddated API');
 
-   // 🛑 Origin check
-  if (!origin || origin !== ALLOWED_ORIGIN) {
-  console.log(`🚫 Blocked origin: ${origin}`);
-  return res.status(403).json({ message: 'Access denied: Invalid origin' });
-  }
-
+   
   
   // 🛑 API key check
   if (apiKey !== SECURE_API_KEY) {

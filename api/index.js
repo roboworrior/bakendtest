@@ -20,7 +20,7 @@ const validateRequest = (req, res, next) => {
     const origin = req.headers.origin;
     const apiKey = req.headers['x-api-key'];
 
-    if (origin && origin !== process.env.ALLOWED_ORIGIN) {
+    if (origin !== process.env.ALLOWED_ORIGIN) {
         console.log(`🚫 Blocked origin: ${origin}`);
         return res.status(403).json({ message: 'Access denied: Invalid origin' });
     }

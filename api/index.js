@@ -46,9 +46,9 @@ cloudinary.config({
 app.use(express.json());  
 
 app.use(cors({
-    origin: ALLOWED_ORIGIN,
-    methods: ['POST','GET'],
-    credentials: true, // if using cookies/session
+   // origin: ALLOWED_ORIGIN,
+    //methods: ['POST','GET'],
+    //credentials: true, // if using cookies/session
 }));
 
 

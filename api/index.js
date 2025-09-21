@@ -13,7 +13,7 @@ const upload = multer({
     limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
 });
 
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN;
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN ||'http://localhost:5173';
 const SECURE_API_KEY = process.env.SECURE_API_KEY; 
 
 const validateRequest = (req, res, next) => {

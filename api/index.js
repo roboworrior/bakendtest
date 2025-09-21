@@ -13,17 +13,17 @@ const upload = multer({
     limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
 });
 
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN ||'http://localhost:5173';
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN ;
 const SECURE_API_KEY = process.env.SECURE_API_KEY; 
 
 const validateRequest = (req, res, next) => {
     const origin = req.headers.origin;
     const apiKey = req.headers['x-api-key'];
 
-    if (origin !== process.env.ALLOWED_ORIGIN) {
-        console.log(`🚫 Invalid API Key: ${apiKey}`);
-        return res.status(403).json({ message: 'Access denied: Invalid API key' });
-    }
+    // if (origin !== process.env.ALLOWED_ORIGIN) {
+    //     console.log(`🚫 Invalid API Key: ${apiKey}`);
+    //     return res.status(403).json({ message: 'Access denied: Invalid API key' });
+    // }
         
 
     if (apiKey !== process.env.SECURE_API_KEY) {

@@ -1,72 +1,134 @@
 const express = require('express');  
-const pool = require('./db');  
+const pool = require('../db');  
 const cors = require('cors');  
 
 const bcrypt = require('bcrypt');
 const app = express(); 
 
+const multer = require('multer');
+
+// Configure multer to use memory storage
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
+});
+
+//const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN ;
+const SECURE_API_KEY = process.env.SECURE_API_KEY; 
+
+const validateRequest = (req, res, next) => {
+  //  const origin = req.headers.origin;
+    const apiKey = req.headers['x-api-key'];
+
+    // if (origin !== process.env.ALLOWED_ORIGIN) {
+    //     console.log(`🚫 Invalid API Key: ${apiKey}`);
+    //     return res.status(403).json({ message: 'Access denied: Invalid API key' });
+    // }
+        
+
+    if (apiKey !== process.env.SECURE_API_KEY) {
+        console.log(`🚫 Invalid API Key: ${apiKey}`);
+        return res.status(403).json({ message: 'Access denied: Invalid API key' });
+    }
+
+    next();
+};
+
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Replace with your Cloudinary cloud name
+    api_key: process.env.CLOUDINARY_API_KEY , // Replace with your Cloudinary API key
+    api_secret: process.env.CLOUDINARY_API_SECRET, // Replace with your Cloudinary API secret
+});
+
 // Middleware  
 app.use(express.json());  
+
 app.use(cors({
-  origin: 'https://apbyte.com', // only this origin can access
-  methods: ['GET', 'POST'],
-  credentials: true
+    origin: ALLOWED_ORIGIN,
+    methods: ['POST','GET'],
+    credentials: true, // if using cookies/session
 }));
+
+
 
 // Example route to test the database connection  
 
-app.get('/test', async (req, res) => {  
-  try {  
-    const result = await pool.query('SELECT * FROM userinfo');  
-    res.json(result.rows);  
+app.get('/order',validateRequest, async (req, res) => {  
 
-  } catch (err) {  
-    console.error(err);  
-    res.status(500).json({ message: 'Database error' });  
-  }  
+    console.log('💥 This is the updated API');
+    
+      try {  
+        const result = await pool.query('SELECT * FROM userinfo');  
+        res.json(result.rows);  
+    
+      } catch (err) {  
+        console.error(err);  
+        res.status(500).json({ message: 'Database error' });  
+      }  
 });  
 
-app.get('/data', async (req, res) => {  
-  try {  
-    const result = await pool.query('SELECT * FROM data');  
-    res.json(result.rows);  
 
-  } catch (err) {  
-    console.error(err);  
-    res.status(500).json({ message: 'Database error' });  
-  }  
-});  
 
-app.post('/api/upload', upload.single('image'), async (req, res) => {
-    try {
-        const { id, title, price, catagory, codename, discription } = req.body;
+app.get('/data', validateRequest,async (req, res) => {
+  console.log('💥 This is the upddated API');
 
-        if (!id || !title || !price || !catagory || !codename || !discription) {
-            return res.status(400).json({ message: 'Missing required fields' });
-        }
 
-        // Check if an image was uploaded
-        const imgPath = req.file ? `/uploads/${req.file.filename}` : null;
+  try {
+    const result = await pool.query('SELECT * FROM data');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Database error' });
+  }
+});
 
-        let query = 'INSERT INTO data(name, catagory, price, discr, codename, id';
-        let values = [title, catagory, price, discription, codename, id];
-        let placeholders = '$1, $2, $3, $4, $5, $6';
 
-        if (imgPath) {
-            query += ', img';
-            values.push(imgPath);
-            placeholders += ', $7';
-        }
 
-        query += `) VALUES (${placeholders}) RETURNING *`;
+app.post('/upload', upload.single('image'), async (req, res) => {
+  try {
+      const { id, title, price, catagory, codename, discription } = req.body;
 
-        const result = await pool.query(query, values);
+      if (!id || !title || !price || !catagory || !codename || !discription) {
+          return res.status(400).json({ message: 'Missing required fields' });
+      }
 
-        res.status(201).json(result.rows[0]);
-    } catch (error) {
-        console.error('Error saving data:', error);
-        res.status(500).json({ message: 'Error saving data' });
-    }
+      let imgUrl = null;
+
+      if (req.file) {
+          console.log('Uploading file to Cloudinary...');
+          const result = await cloudinary.uploader.upload_stream(
+              { folder: 'uploads' }, // Optional: Specify a folder in Cloudinary
+              (error, result) => {
+                  if (error) {
+                      console.error('Cloudinary upload error:', error);
+                      return res.status(500).json({ message: 'Cloudinary upload failed' });
+                  }
+                  imgUrl = result.secure_url; // Get the URL of the uploaded image
+                  console.log('File uploaded to Cloudinary:', imgUrl);
+
+                  // Save the data to your database
+                  const query = 'INSERT INTO data(name, img, catagory, price, discr, codename, id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
+                  const values = [title, imgUrl, catagory, price, discription, codename, id];
+
+                  pool.query(query, values, (err, dbResult) => {
+                      if (err) {
+                          console.error('Database error:', err);
+                          return res.status(500).json({ message: 'Database error' });
+                      }
+                      res.status(201).json(dbResult.rows[0]);
+                  });
+              }
+          );
+          result.end(req.file.buffer); // Pass the file buffer to Cloudinary
+      } else {
+          return res.status(400).json({ message: 'No file uploaded' });
+      }
+  } catch (error) {
+      console.error('Error in /upload:', error);
+      res.status(500).json({ message: 'Error saving data' });
+  }
 });
 
 app.post('/api/submit', async (req, res) => {  
@@ -132,8 +194,6 @@ app.post('/api/registor', async (req, res) => {
         res.status(500).json({ message: 'Error saving data' });  
     }  
 }); 
-
-
 
 const PORT = process.env.PORT || 3000;  
 app.listen(PORT, () => {  

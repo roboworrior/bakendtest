@@ -1,5 +1,5 @@
 const express = require('express');  
-const pool = require('../db');  
+const pool = require('./db');  
 const cors = require('cors');  
 
 const bcrypt = require('bcrypt');
@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cors());  
 // Example route to test the database connection  
 
-app.get('/order', async (req, res) => {  
+app.get('/test', async (req, res) => {  
   try {  
     const result = await pool.query('SELECT * FROM userinfo');  
     res.json(result.rows);  

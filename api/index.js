@@ -7,7 +7,12 @@ const app = express();
 
 // Middleware  
 app.use(express.json());  
-app.use(cors());  
+app.use(cors({
+  origin: 'https://apbyte.com', // only this origin can access
+  methods: ['GET', 'POST'],
+  credentials: true
+}));
+
 // Example route to test the database connection  
 
 app.get('/test', async (req, res) => {  

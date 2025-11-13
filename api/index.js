@@ -105,6 +105,9 @@ app.post('/upload', upload.single('image'), async (req, res) => {
           return res.status(400).json({ message: 'Missing required fields' });
       }
 
+
+
+
       let imgUrl = null;
 
       if (req.file) {
@@ -126,7 +129,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
                   pool.query(query, values, (err, dbResult) => {
                       if (err) {
                           console.error('Database error:', err);
-                          return res.status(500).json({ message: 'Database error' });
+                          return res.status(500).json({ message: 'Database error',err });
                       }
                       res.status(201).json(dbResult.rows[0]);
                   });

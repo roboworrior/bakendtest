@@ -213,7 +213,6 @@ app.post('/api/registor', async (req, res) => {
         if ( !username || !password || !email ) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
-        
         const hashedPassword = await bcrypt.hash(password,10); // Hash the password
 
         const result = await pool.query('INSERT INTO logindata(username,password,email) VALUES ($1, $2,$3) RETURNING *',[username,hashedPassword,email]);  

@@ -60,7 +60,7 @@ app.get('/orders', async (req, res) => {
 
     const adminid = req.headers.userid;
     
-    if(adminid){
+    if(1){
 
         console.error(err);  
         res.status(500).json({ message: 'You are not admin' });

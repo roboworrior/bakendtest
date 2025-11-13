@@ -104,7 +104,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
   try {
       const { id, title, price, catagory, codename, discription } = req.body;
 
-      if (!title || !price || !catagory || !codename || !discription) {
+      if ( !title || !price || !catagory || !codename || !discription) {
           return res.status(400).json({ message: 'Missing required fields' });
       }
 
@@ -123,7 +123,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
                   console.log('File uploaded to Cloudinary:', imgUrl);
 
                   // Save the data to your database
-                  const query = 'INSERT INTO data(name, img, catagory, price, discr, codename) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
+                  const query = 'INSERT INTO data(name, img, catagory, price, discr, codename, id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
                   const values = [title, imgUrl, catagory, price, discription, codename];
 
                   pool.query(query, values, (err, dbResult) => {

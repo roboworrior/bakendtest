@@ -138,7 +138,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
       }
   } catch (error) {
       console.error('Error in /upload:', error);
-      return res.status(500).json({ message: 'Error saving data' });
+      return res.status(500).json({ message: 'end Error saving data' });
   }
 });
 

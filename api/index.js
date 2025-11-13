@@ -62,7 +62,7 @@ app.get('/orders', async (req, res) => {
     
     if(adminid !==process.env.ADMIN_ID){
 
-        console.error(err);  
+        console.error("Unauthorized access attempt by:", adminid);  
         return res.status(403).json({ message: 'You are not admin' });
     }
     

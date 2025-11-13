@@ -55,10 +55,21 @@ app.use(cors({
 
 // Example route to test the database connection  
 
-app.get('/order', async (req, res) => {  
+app.get('/orders', async (req, res) => {  
 
-    console.log('💥 This is the updated API');
+
+    const adminid = req.headers.userid;
     
+
+    if(!adminid==process.env.ADMIN_ID){
+
+        console.error(err);  
+        res.status(500).json({ message: 'You are not admin' });
+    }
+    
+        // console.log('💥 This is the updated API');
+    
+
       try {  
         const result = await pool.query('SELECT * FROM userinfo');  
         res.json(result.rows);  

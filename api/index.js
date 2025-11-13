@@ -55,7 +55,7 @@ app.use(cors({
 
 // Example route to test the database connection  
 
-app.get('/order',validateRequest, async (req, res) => {  
+app.get('/order', async (req, res) => {  
 
     console.log('💥 This is the updated API');
     

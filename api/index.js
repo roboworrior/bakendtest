@@ -63,7 +63,7 @@ app.get('/orders', async (req, res) => {
     if(adminid !==process.env.ADMIN_ID){
 
         console.error(err);  
-        return res.status(500).json({ message: 'You are not admin' });
+        return res.status(403).json({ message: 'You are not admin' });
     }
     
         // console.log('💥 This is the updated API');

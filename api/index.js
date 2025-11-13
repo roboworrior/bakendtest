@@ -104,7 +104,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
   try {
       const { id, title, price, catagory, codename, discription } = req.body;
 
-      if (!id || !title || !price || !catagory || !codename || !discription) {
+      if (!title || !price || !catagory || !codename || !discription) {
           return res.status(400).json({ message: 'Missing required fields' });
       }
 

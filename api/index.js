@@ -18,12 +18,13 @@ const SECURE_API_KEY = process.env.SECURE_API_KEY;
 
 const validateRequest = (req, res, next) => {
   //  const origin = req.headers.origin;
-  // if (origin !== process.env.ALLOWED_ORIGIN) {
-  //     console.log(`🚫 Invalid API Key: ${apiKey}`);
-  //     return res.status(403).json({ message: 'Access denied: Invalid API key' });
-  // }
-      
     const apiKey = req.headers['x-api-key'];
+
+    // if (origin !== process.env.ALLOWED_ORIGIN) {
+    //     console.log(`🚫 Invalid API Key: ${apiKey}`);
+    //     return res.status(403).json({ message: 'Access denied: Invalid API key' });
+    // }
+        
 
     if (apiKey !== process.env.SECURE_API_KEY) {
         console.log(`🚫 Invalid API Key: ${apiKey}`);
@@ -60,7 +61,7 @@ app.get('/orders', async (req, res) => {
     const adminid = req.headers.userid;
     
 
-    if(adminid !==process.env.ADMIN_ID){
+    if(!adminid==process.env.ADMIN_ID){
 
         console.error(err);  
         res.status(500).json({ message: 'You are not admin' });

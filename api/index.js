@@ -89,12 +89,14 @@ app.get('/data', validateRequest,async (req, res) => {
 
 
   try {
-    const result = await pool.query('SELECT * FROM data');
+    const result = await pool.query('SELECT * FROM data ORDER BY id DESC');
     res.json(result.rows);
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Database error' });
   }
+  
 });
 
 
@@ -125,7 +127,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
                   // Save the data to your database
                  const query = 'INSERT INTO data(name, img, catagory, price, discr, codename) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
 
-                  const values = [title, imgUrl, catagory, price, discription, codename];
+                const values = [title, imgUrl, catagory, price, discription, codename];
 
                   pool.query(query, values, (err, dbResult) => {
                       if (err) {

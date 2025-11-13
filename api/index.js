@@ -215,7 +215,7 @@ app.post('/api/registor', async (req, res) => {
     
     catch (error) {  
         console.error('Error saving data:', error);  
-        res.status(500).json({ message: 'Error saving data' });  
+        res.status(500).json({ message: 'Error saving data',error1: error });  
     }  
 }); 
 

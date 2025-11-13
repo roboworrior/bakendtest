@@ -13,6 +13,9 @@ const upload = multer({
     limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
 });
 
+
+
+
 //const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN ;
 const SECURE_API_KEY = process.env.SECURE_API_KEY; 
 
@@ -126,7 +129,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
                   pool.query(query, values, (err, dbResult) => {
                       if (err) {
                           console.error('Database error:', err);
-                          return res.status(500).json({ message: 'Database error' });
+                          return res.status(500).json({ message: 'Database error',err });
                       }
                       res.status(201).json(dbResult.rows[0]);
                   });

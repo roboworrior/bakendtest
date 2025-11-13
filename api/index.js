@@ -96,6 +96,7 @@ app.get('/data', validateRequest,async (req, res) => {
 
 
 
+
 app.post('/upload', upload.single('image'), async (req, res) => {
   try {
       const { id, title, price, catagory, codename, discription } = req.body;
@@ -137,9 +138,14 @@ app.post('/upload', upload.single('image'), async (req, res) => {
       }
   } catch (error) {
       console.error('Error in /upload:', error);
-      res.status(500).json({ message: 'Error saving data' });
+      return res.status(500).json({ message: 'Error saving data' });
   }
 });
+
+
+
+
+
 
 app.post('/api/submit', async (req, res) => {  
     try {  

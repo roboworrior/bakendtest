@@ -211,7 +211,7 @@ app.post('/api/registor', async (req, res) => {
         
         
         if ( !username || !password || !email ) {
-            return res.status(400).json({ message: 'Missing required fields' });
+            return res.status(400).json({ message: 'Missing required fields',error:{detail:" "} });
         }
         const hashedPassword = await bcrypt.hash(password,10); // Hash the password
 

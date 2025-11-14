@@ -169,7 +169,7 @@ app.post('/api/submit', async (req, res) => {
     }  
 }); 
 
-app.get('/api/myorder', async (req, res) => {  
+app.post('/api/myorder', async (req, res) => {  
     try {  
         const { email  } = req.body;  
         

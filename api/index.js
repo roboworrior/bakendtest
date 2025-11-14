@@ -175,12 +175,12 @@ app.get('/api/myorder', async (req, res) => {
         
         const result = await pool.query('SELECT * FROM userinfo WHERE email = $1',[email] );  
         
-        res.status(201).json(result.rows);  
+        return res.status(201).json(result.rows);  
 
     } 
     catch (error) {  
         
-        res.status(500).json({ message: 'Email not found ' });  
+        return res.status(500).json({ message: 'Email not found ' });  
         
     
     }  

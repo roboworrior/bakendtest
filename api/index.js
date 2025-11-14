@@ -173,7 +173,9 @@ app.post('/api/myorder', async (req, res) => {
     try {  
         const {email} = req.body;  
 
-        
+          if (!email) {
+            return res.status(400).json({ message: 'eEmail is required' });
+        }
 
         const result = await pool.query('SELECT * FROM userinfo WHERE email = $1',[email] );  
         

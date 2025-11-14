@@ -48,6 +48,8 @@ cloudinary.config({
 // Middleware  
 app.use(express.json());  
 
+app.use(express.urlencoded({ extended: true }));  // <-- VERY IMPORTANT
+
 app.use(cors({
    // origin: ALLOWED_ORIGIN,
     //methods: ['POST','GET'],

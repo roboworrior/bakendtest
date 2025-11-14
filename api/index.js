@@ -169,6 +169,27 @@ app.post('/api/submit', async (req, res) => {
     }  
 }); 
 
+app.get('/api/myorder', async (req, res) => {  
+    try {  
+        const { email  } = req.body;  
+        
+        const result = await pool.query('SELECT * FROM userinfo WHERE email = $1',[email] );  
+        
+        res.status(201).json(result.rows);  
+
+    } 
+    catch (error) {  
+        
+        res.status(500).json({ message: 'Email not found ' });  
+        
+    
+    }  
+
+}); 
+
+
+
+
 app.post('/api/login', async (req, res) => {  
     try {  
         const { email,password} = req.body;  

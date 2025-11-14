@@ -171,7 +171,7 @@ app.post('/api/submit', async (req, res) => {
 
 app.post('/api/myorder', async (req, res) => {  
     try {  
-        const {email} = req.header;  
+        const {email} = req.body;  
 
         
 

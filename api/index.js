@@ -171,31 +171,28 @@ app.post('/api/submit', async (req, res) => {
     }  
 }); 
 
-app.post('/api/myorder', async (req, res) => {  
-    try {  
-        const {email} = req.body;  
+app.post('/api/myorder', async (req, res) => {
+    try {
+        const { email } = req.body;
 
-          if (!email) {
-            return res.status(400).json({ message: 'eEmail is required' });
+        if (!email) {
+            return res.status(400).json({ message: 'Email is required' });
         }
 
-        const result = await pool.query('SELECT * FROM userinfo WHERE email = $1',[email] );  
-        
-        if (result.rows.length === 0) {
-            return res.status(404).json({ message: 'No orders found for this email' });
-        }
-       
-        return res.status(201).json(result.rows);  
+        const result = await pool.query(
+            'SELECT * FROM userinfo WHERE email = $1',
+            [email]
+        );
+
+        return res.status(200).json(result.rows);
 
     } 
-    catch (error) {  
-        
-        return res.status(500).json({ message: 'Email not found ' });  
-        
-    
-    }  
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+});
 
-}); 
 
 
 

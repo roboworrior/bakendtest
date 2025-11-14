@@ -158,7 +158,7 @@ app.post('/api/submit', async (req, res) => {
         const { name, phone_number,email ,cartItems } = req.body;  
         console.log("this is the data",cartItems);
         
-        const result = await pool.query('INSERT INTO userinfo(name,phone_number,cart) VALUES ($1, $2 ,$3 ,$4) RETURNING *',[name, phone_number ,JSON.stringify(cartItems),email]);  
+        const result = await pool.query('INSERT INTO userinfo(name,phone_number,cart,email) VALUES ($1, $2 ,$3 ,$4) RETURNING *',[name, phone_number ,JSON.stringify(cartItems),email]);  
 
         res.status(201).json(result.rows[0]);  
     } 

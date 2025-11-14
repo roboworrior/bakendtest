@@ -155,10 +155,10 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 
 app.post('/api/submit', async (req, res) => {  
     try {  
-        const { name, phone_number ,cartItems } = req.body;  
+        const { name, phone_number,email ,cartItems } = req.body;  
         console.log("this is the data",cartItems);
         
-        const result = await pool.query('INSERT INTO userinfo(name,phone_number,cart) VALUES ($1, $2 ,$3) RETURNING *',[name, phone_number ,JSON.stringify(cartItems)]);  
+        const result = await pool.query('INSERT INTO userinfo(name,phone_number,cart) VALUES ($1, $2 ,$3 ,$4) RETURNING *',[name, phone_number ,JSON.stringify(cartItems),email]);  
 
         res.status(201).json(result.rows[0]);  
     } 
@@ -221,7 +221,9 @@ app.post('/api/registor', async (req, res) => {
     } 
     
     catch (error) {  
-        console.error('Error saving data:', error);  
+        
+        
+
         res.status(500).json({ message: 'Error saving data',error: error });  
     }  
 }); 

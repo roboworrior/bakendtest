@@ -172,9 +172,16 @@ app.post('/api/submit', async (req, res) => {
 app.post('/api/myorder', async (req, res) => {  
     try {  
         const { email  } = req.body;  
-        
+          if (!email) {
+            return res.status(400).json({ message: 'Email is required' });
+        }
+
         const result = await pool.query('SELECT * FROM userinfo WHERE email = $1',[email] );  
         
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'No orders found for this email' });
+        }
+       
         return res.status(201).json(result.rows);  
 
     } 

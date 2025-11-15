@@ -176,7 +176,7 @@ app.post('/api/myorder', async (req, res) => {
         const { email } = req.body;
 
         if (!email) {
-            return res.status(400).json({ message: 'dEmail is required', email });
+            return res.status(400).json({ message: 'Email is required', email });
         }
 
         const result = await pool.query(
@@ -185,7 +185,7 @@ app.post('/api/myorder', async (req, res) => {
         );
 
         if (result.rowCount < 1) {
-            return res.status(401).json({ message: 'No orders found' });
+            return res.status(401).json([ message = 'No orders found' ]);
         }
 
         return res.status(200).json(result.rows);

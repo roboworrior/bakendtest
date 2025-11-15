@@ -185,7 +185,7 @@ app.post('/api/myorder', async (req, res) => {
         );
 
         if (result.rowCount < 1) {
-            return res.status(401).json([ message = 'No orders found' ]);
+            return res.status(401).json({ message :'No orders found' });
         }
 
         return res.status(200).json(result.rows);

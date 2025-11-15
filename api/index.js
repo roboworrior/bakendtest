@@ -183,9 +183,9 @@ app.post('/api/myorder', async (req, res) => {
             'SELECT cart FROM userinfo WHERE email = $1',
             [email]
         );
-        
-        if(result.rows.length == 0){
-            return res.status(401).json({ message: 'No orders found',data:[] });
+
+        if (result.rows.length === 0) {
+            return res.status(401).json({ message: 'No orders found', data: [] });
         }
 
         // return res.status(200).json(result.rows);

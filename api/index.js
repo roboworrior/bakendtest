@@ -184,7 +184,7 @@ app.post('/api/myorder', async (req, res) => {
             [email]
         );
         
-        if(result.row<1){
+        if(result.row < 1){
 
             return res.status(401).json({ message: 'No orders yet' });
         }

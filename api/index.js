@@ -188,8 +188,8 @@ app.post('/api/myorder', async (req, res) => {
             return res.status(401).json({ message: 'No orders found', data: [] });
         }
 
-        // return res.status(200).json(result.rows);
-        return res.status(200).json({ message: 'Server Pass' });
+        return res.status(200).json(result.rows);
+      
 
     }
     catch (error) {

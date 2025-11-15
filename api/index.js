@@ -158,6 +158,11 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 app.post('/api/submit', async (req, res) => {
     try {
         const { name, phone_number, email, cartItems } = req.body;
+
+          if (!email || !name || !phone_number) {
+            return res.status(401).json({ message: 'Please fill in all the required fields.'});
+        }
+       
         console.log("this is the data", cartItems);
 
         const result = await pool.query('INSERT INTO userinfo(name,phone_number,cart,email) VALUES ($1, $2 ,$3 ,$4) RETURNING *', [name, phone_number, JSON.stringify(cartItems), email]);
@@ -207,7 +212,7 @@ app.post('/api/login', async (req, res) => {
         const { email, password } = req.body;
 
          if (!email || !password) {
-            return res.status(401).json({ message: 'Email and password is required'});
+            return res.status(401).json({ message: 'Please fill in all the required fields.'});
         }
        
 
@@ -247,6 +252,10 @@ app.post('/api/registor', async (req, res) => {
 
         const { username, password, email } = req.body;
 
+          if (!email || !password || !email) {
+            return res.status(401).json({ message: 'please fill all the inputs'});
+        }
+       
 
         if (!username || !password || !email) {
             return res.status(400).json({ message: 'Missing required fields', error: { detail: " " } });

@@ -184,11 +184,12 @@ app.post('/api/myorder', async (req, res) => {
             [email]
         );
         
-        if(result.rows.length==0){
+        if(result.rows.length == 0){
             return res.status(500).json({ message: 'No orders found',data:[] });
         }
 
-        return res.status(200).json(result.rows);
+        // return res.status(200).json(result.rows);
+        return res.status(200).json({ message: 'Server Pass' });
 
     }
     catch (error) {

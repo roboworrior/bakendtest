@@ -159,7 +159,7 @@ app.post('/api/submit', async (req, res) => {
     try {
         const { name, phone_number, email, cartItems } = req.body;
 
-          if (!email || !name || !phone_number) {
+          if (!email || !name || !phone_number || !cartItems) {
             return res.status(401).json({ message: 'Please fill in all the required fields.'});
         }
        

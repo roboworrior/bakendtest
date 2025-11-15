@@ -186,7 +186,7 @@ app.post('/api/myorder', async (req, res) => {
 
         data=[];
         result.rows.forEach((item, index) => {
-            data+=cart;
+            data+=item.cart;
         });
         return res.status(200).json(data);
 

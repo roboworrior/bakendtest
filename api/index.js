@@ -180,15 +180,12 @@ app.post('/api/myorder', async (req, res) => {
         }
 
         const result = await pool.query(
-            'SELECT * FROM userinfo WHERE email = $1',
+            'SELECT cart FROM userinfo WHERE email = $1',
             [email]
         );
-
-        data=[];
-        result.rows.forEach((item, index) => {
-            data+=item.cart;
-        });
-        return res.status(200).json(data);
+        
+        
+        return res.status(200).json(result.rows);
 
     }
     catch (error) {

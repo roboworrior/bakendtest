@@ -176,7 +176,7 @@ app.post('/api/myorder', async (req, res) => {
         const { email } = req.body;
 
         if (!email) {
-            return res.status(400).json({ message: 'Email is required', email });
+            return res.status(400).json({ message: 'Email is required'});
         }
 
         const result = await pool.query(
@@ -205,6 +205,11 @@ app.post('/api/myorder', async (req, res) => {
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
+
+         if (!email || !password) {
+            return res.status(401).json({ message: 'Email and password is required'});
+        }
+       
 
         // const result = await pool.query('INSERT INTO logindata(email,password) VALUES ($1, $2) RETURNING *',[email,password]);  
 

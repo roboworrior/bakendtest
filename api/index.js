@@ -1,9 +1,15 @@
 const express = require('express');
 const pool = require('../db');
+const auth = require("../middleware/auth");
+const adminOnly = require("../middleware/admin");
 const cors = require('cors');
 
-const bcrypt = require('bcrypt');
 const app = express();
+
+const jwt = require("jsonwebtoken");
+const bcrypt = require('bcrypt');
+require("dotenv").config();
+
 
 const multer = require('multer');
 
@@ -13,7 +19,13 @@ const upload = multer({
     limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
 });
 
-
+function createToken(user) {
+  return jwt.sign(
+    { id: user.id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "1h" }
+  );
+}
 
 
 //const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN ;
@@ -60,7 +72,7 @@ app.use(cors({
 
 // Example route to test the database connection  
 
-app.get('/orders', async (req, res) => {
+app.get('/orders', auth, adminOnly, async (req, res) => {
 
 
     const adminid = req.headers.userid;
@@ -176,7 +188,7 @@ app.post('/api/submit', async (req, res) => {
     }
 });
 
-app.post('/api/myorder', async (req, res) => {
+app.post('/api/myorder',auth, async (req, res) => {
     try {
         const { email } = req.body;
 
@@ -211,39 +223,54 @@ app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
-         if (!email || !password) {
-            return res.status(401).json({ message: 'Please fill in all the required fields.'});
+        if (!email || !password) {
+            return res.status(401).json({ message: 'Please fill in all the required fields.' });
         }
-       
 
-        // const result = await pool.query('INSERT INTO logindata(email,password) VALUES ($1, $2) RETURNING *',[email,password]);  
+        // Fetch user from database
+        const userResult = await pool.query('SELECT * FROM logindata WHERE email = $1', [email]);
 
-        // Check if the user exists
-        const user = await pool.query('SELECT * FROM logindata WHERE email = $1', [email]);
-
-        if (user.rows.length === 0) {
+        if (userResult.rows.length === 0) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
 
-        // Compare the provided password with the hashed password
-        const validPassword = await bcrypt.compare(password, user.rows[0].password);
+        const user = userResult.rows[0];
 
+        // Validate password
+        const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
 
+        // Determine role
+        const role = (email === process.env.ADMIN_EMAIL) ? "admin" : "user";
 
+        // Create JWT token
+        const token = jwt.sign(
+            {
+                userid: user.userid,
+                email: user.email,
+                role: role
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
 
-        res.status(200).json({ message: 'Welcome back', user: user.rows[0].username, userid: user.rows[0].userid, email: user.rows[0].email });
+        res.status(200).json({
+            message: 'Welcome back',
+            username: user.username,
+            userid: user.userid,
+            email: user.email,
+            role: role,
+            token: token
+        });
 
-
-    }
-
-    catch (error) {
-        console.error('Error saving data:', error);
-        res.status(500).json({ message: 'Error saving data' });
+    } catch (error) {
+        console.error("Error during login:", error);
+        res.status(500).json({ message: 'Server error during login' });
     }
 });
+
 
 app.post('/api/registor', async (req, res) => {
 

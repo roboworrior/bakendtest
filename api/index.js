@@ -19,13 +19,6 @@ const upload = multer({
     limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
 });
 
-function createToken(user) {
-  return jwt.sign(
-    { id: user.id, role: user.role },
-    process.env.JWT_SECRET,
-    { expiresIn: "1h" }
-  );
-}
 
 
 //const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN ;
@@ -253,7 +246,7 @@ app.post('/api/login', async (req, res) => {
                 role: role
             },
             process.env.JWT_SECRET,
-            { expiresIn: "7d" }
+            { expiresIn: "5m" }
         );
 
         res.status(200).json({

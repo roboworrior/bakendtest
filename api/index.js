@@ -68,17 +68,6 @@ app.use(cors({
 app.get('/orders', auth, adminOnly, async (req, res) => {
 
 
-    const adminid = req.headers.userid;
-
-    if (adminid !== process.env.ADMIN_ID) {
-
-        console.error("Unauthorized access attempt by:", adminid);
-        return res.status(403).json({ message: 'You are not admin' });
-    }
-
-    // console.log('💥 This is the updated API');
-
-
     try {
         const result = await pool.query('SELECT * FROM userinfo');
         res.json(result.rows);

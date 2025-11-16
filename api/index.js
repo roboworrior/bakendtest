@@ -172,7 +172,7 @@ app.post('/api/submit', async (req, res) => {
 
 app.post('/api/myorder',auth, async (req, res) => {
     try {
-        const { email } = req.body;
+        const  email  = req.user.email;
 
         if (!email) {
             return res.status(400).json({ message: 'Email is required'});

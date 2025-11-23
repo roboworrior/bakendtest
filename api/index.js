@@ -147,10 +147,10 @@ app.post('/api/submit', async (req, res) => {
     try {
         const { name, phone_number, email, cartItems } = req.body;
 
-          if (!email || !name || !phone_number || cartItems.length==0) {
-            return res.status(401).json({ message: 'Please fill in all the required fields.'});
+        if (!email || !name || !phone_number || cartItems.length == 0) {
+            return res.status(401).json({ message: 'Please fill in all the required fields.' });
         }
-       
+
         console.log("this is the data", cartItems);
 
         const result = await pool.query('INSERT INTO userinfo(name,phone_number,cart,email) VALUES ($1, $2 ,$3 ,$4) RETURNING *', [name, phone_number, JSON.stringify(cartItems), email]);
@@ -164,12 +164,12 @@ app.post('/api/submit', async (req, res) => {
     }
 });
 
-app.post('/api/myorder',auth, async (req, res) => {
+app.post('/api/myorder', auth, async (req, res) => {
     try {
-        const  email  = req.user.email;
+        const email = req.user.email;
 
         if (!email) {
-            return res.status(400).json({ message: 'Email is required'});
+            return res.status(400).json({ message: 'Email is required' });
         }
 
         const result = await pool.query(
@@ -178,11 +178,11 @@ app.post('/api/myorder',auth, async (req, res) => {
         );
 
         if (result.rowCount < 1) {
-            return res.status(401).json({ message :'No orders found' });
+            return res.status(401).json({ message: 'No orders found' });
         }
 
         return res.status(200).json(result.rows);
-      
+
 
     }
     catch (error) {
@@ -253,16 +253,16 @@ app.post('/api/register', async (req, res) => {
     try {
 
 
-        const { username, password, email,mobile } = req.body;
+        const { username, password, email, mobile } = req.body;
 
-    
+
         if (!username || !password || !email) {
             return res.status(400).json({ message: 'Missing required fields', error: { detail: " " } });
         }
-    
+
         const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
 
-        const result = await pool.query('INSERT INTO logindata(username,password,email,mobile) VALUES ($1, $2,$3,$4) RETURNING *', [username, hashedPassword, email,mobile]);
+        const result = await pool.query('INSERT INTO logindata(username,password,email,mobile) VALUES ($1, $2,$3,$4) RETURNING *', [username, hashedPassword, email, mobile]);
 
         res.status(201).json(result.rows[0]);
     }
@@ -271,7 +271,7 @@ app.post('/api/register', async (req, res) => {
 
 
 
-        res.status(500).json({ message: 'Error saving data'+ error });
+        res.status(500).json({ message: 'Error saving data' + error });
     }
 });
 
@@ -282,22 +282,25 @@ app.post('/api/webapp', async (req, res) => {
 
         const { rows } = req.body;
 
-    
-        if (!rows) {
+
+
+        if (!rows || rows.length === 0) {
             return res.status(400).json({ message: 'Missing required fields', error: { detail: " " } });
         }
-    
-  
-//        const result = await pool.query('INSERT INTO logindata(username,password,email,mobile) VALUES ($1, $2,$3,$4) RETURNING *', [username, hashedPassword, email,mobile]);
 
-        res.status(201).json({ message: "this is erbaapp"+rows[0].name });
+
+
+
+        //        const result = await pool.query('INSERT INTO logindata(username,password,email,mobile) VALUES ($1, $2,$3,$4) RETURNING *', [username, hashedPassword, email,mobile]);
+
+        res.status(201).json({ message: "this is erbaapp" + rows[0].name });
     }
 
     catch (error) {
 
 
 
-        res.status(500).json({ message: 'Error saving data'+ error });
+        res.status(500).json({ message: 'Error saving data' + error });
     }
 });
 

@@ -309,7 +309,7 @@ app.post('/api/webapp', async (req, res) => {
     }
 });
 
-app.get('webapp/orders', auth, adminOnly, async (req, res) => {
+app.get('/webapp/orders', auth, adminOnly, async (req, res) => {
 
 
     try {

@@ -281,6 +281,30 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
+app.post('/api/webapp',auth, async (req, res) => {
+
+    try {
+
+
+        const { username, password, email,mobile } = req.body;
+
+    
+        // if (!username || !password || !email) {
+        //     return res.status(400).json({ message: 'Missing required fields', error: { detail: " " } });
+        // }
+    
+    
+        res.status(201).json({ message: 'we are at api' });
+    }
+
+    catch (error) {
+
+
+
+        res.status(500).json({ message: 'Error saving data'+ error });
+    }
+});
+
 
 
 const PORT = process.env.PORT || 3000;

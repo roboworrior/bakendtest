@@ -288,7 +288,7 @@ app.post('/api/webapp',auth async (req, res) => {
         }
     
     
-        res.status(201).json({ message: 'we are at api'+rows[0].name });
+        res.status(201).json({ message: 'we are at api' });
     }
 
     catch (error) {

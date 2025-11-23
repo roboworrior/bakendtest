@@ -275,18 +275,11 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-app.post('/api/webapp',auth async (req, res) => {
+app.post('/api/webapp' async (req, res) => {
 
     try {
 
 
-        const { rows } = req.body;
-
-    
-        if (!rows) {
-             return res.status(400).json({ message: 'Missing required fields', error: { detail: " " } });
-        }
-    
     
         res.status(201).json({ message: 'we are at api' });
     }

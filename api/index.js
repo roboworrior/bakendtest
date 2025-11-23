@@ -291,9 +291,14 @@ app.post('/api/webapp', async (req, res) => {
 
 
 
-        //        const result = await pool.query('INSERT INTO logindata(username,password,email,mobile) VALUES ($1, $2,$3,$4) RETURNING *', [username, hashedPassword, email,mobile]);
+        for (let r of rows) {
+            await pool.query(
+                "INSERT INTO webapp (name, time, date) VALUES ($1, $2, $3)",
+                [r.name, r.time, r.date]
+            );
+        }
 
-        res.status(201).json({ message: "this is erbaapp" + rows[0].name });
+        res.status(201).json({ message: "data saved successfully in database" });
     }
 
     catch (error) {

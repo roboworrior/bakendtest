@@ -275,22 +275,6 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-app.post('/api/webapp' async (req, res) => {
-
-    try {
-
-
-    
-        res.status(201).json({ message: 'we are at api' });
-    }
-
-    catch (error) {
-
-
-
-        res.status(500).json({ message: 'Error saving data'+ error });
-    }
-});
 
 
 

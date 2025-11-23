@@ -229,7 +229,7 @@ app.post('/api/login', async (req, res) => {
                 role: role
             },
             process.env.JWT_SECRET,
-            { expiresIn: "30m" }
+            { expiresIn: "1m" }
         );
 
         res.status(200).json({

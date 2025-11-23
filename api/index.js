@@ -254,12 +254,12 @@ app.post('/api/login', async (req, res) => {
 });
 
 
-app.post('/api/registor', async (req, res) => {
+app.post('/api/register', async (req, res) => {
 
     try {
 
 
-        const { username, password, email } = req.body;
+        const { username, password, email,mobile } = req.body;
 
     
         if (!username || !password || !email) {
@@ -268,7 +268,7 @@ app.post('/api/registor', async (req, res) => {
     
         const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
 
-        const result = await pool.query('INSERT INTO logindata(username,password,email) VALUES ($1, $2,$3) RETURNING *', [username, hashedPassword, email]);
+        const result = await pool.query('INSERT INTO logindata(username,password,email,mobile) VALUES ($1, $2,$3,$4) RETURNING *', [username, hashedPassword, email,mobile]);
 
         res.status(201).json(result.rows[0]);
     }
@@ -280,6 +280,8 @@ app.post('/api/registor', async (req, res) => {
         res.status(500).json({ message: 'Error saving data', error: error });
     }
 });
+
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

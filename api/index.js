@@ -290,7 +290,7 @@ app.post('/api/webapp', async (req, res) => {
   
 //        const result = await pool.query('INSERT INTO logindata(username,password,email,mobile) VALUES ($1, $2,$3,$4) RETURNING *', [username, hashedPassword, email,mobile]);
 
-        res.status(201).json({ message: "this is erbaapp" });
+        res.status(201).json({ message: "this is erbaapp"+rows[0].name });
     }
 
     catch (error) {

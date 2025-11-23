@@ -275,6 +275,31 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
+app.post('/api/webapp', async (req, res) => {
+
+    try {
+
+
+        const { rows } = req.body;
+
+    
+        if (!rows) {
+            return res.status(400).json({ message: 'Missing required fields', error: { detail: " " } });
+        }
+    
+  
+//        const result = await pool.query('INSERT INTO logindata(username,password,email,mobile) VALUES ($1, $2,$3,$4) RETURNING *', [username, hashedPassword, email,mobile]);
+
+        res.status(201).json({ message: "this is erbaapp" });
+    }
+
+    catch (error) {
+
+
+
+        res.status(500).json({ message: 'Error saving data'+ error });
+    }
+});
 
 
 

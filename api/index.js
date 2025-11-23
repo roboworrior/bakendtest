@@ -281,20 +281,20 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-app.post('/api/webapp',auth, async (req, res) => {
+app.post('/api/webapp',auth async (req, res) => {
 
     try {
 
 
-        const { username, password, email,mobile } = req.body;
+        const { rows } = req.body;
 
     
-        // if (!username || !password || !email) {
-        //     return res.status(400).json({ message: 'Missing required fields', error: { detail: " " } });
-        // }
+        if (!rows) {
+             return res.status(400).json({ message: 'Missing required fields', error: { detail: " " } });
+        }
     
     
-        res.status(201).json({ message: 'we are at api' });
+        res.status(201).json({ message: 'we are at api'+rows[0].name });
     }
 
     catch (error) {

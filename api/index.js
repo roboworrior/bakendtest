@@ -277,7 +277,7 @@ app.post('/api/register', async (req, res) => {
 
 
 
-        res.status(500).json({ message: 'Error saving data', error });
+        res.status(500).json({ message: 'Error saving data'+ error });
     }
 });
 

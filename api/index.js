@@ -28,12 +28,6 @@ const validateRequest = (req, res, next) => {
     //  const origin = req.headers.origin;
     const apiKey = req.headers['x-api-key'];
 
-    // if (origin !== process.env.ALLOWED_ORIGIN) {
-    //     console.log(`🚫 Invalid API Key: ${apiKey}`);
-    //     return res.status(403).json({ message: 'Access denied: Invalid API key' });
-    // }
-
-
     if (apiKey !== process.env.SECURE_API_KEY) {
         console.log(`🚫 Invalid API Key: ${apiKey}`);
         return res.status(403).json({ message: 'Access denied: Invalid API key' });

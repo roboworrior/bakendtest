@@ -309,6 +309,20 @@ app.post('/api/webapp', async (req, res) => {
     }
 });
 
+app.get('webapp/orders', auth, adminOnly, async (req, res) => {
+
+
+    try {
+        const result = await pool.query('SELECT * FROM webapp');
+        res.json(result.rows);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Database error' });
+    }
+});
+
+
 
 
 const PORT = process.env.PORT || 3000;

@@ -219,7 +219,7 @@ app.post('/api/login', async (req, res) => {
         }
 
         // Determine role
-        const role = (email === process.env.ADMIN_EMAIL) ? "admin" : "user";
+        const role = (email === process.env.ADMIN_EMAIL ||process.env.ADMIN_EMAIL2) ? "admin" : "user";
 
         // Create JWT token
         const token = jwt.sign(

@@ -89,6 +89,20 @@ app.get('/data', validateRequest, async (req, res) => {
 
 });
 
+app.get('/search', validateRequest, async (req, res) => {
+    try {
+        const { sinput} = req.body;
+
+        const result = await pool.query("SELECT * FROM data where name like '%$1%' ", [sinput]);
+        res.json(result.rows);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Database error' });
+    }
+
+});
+
 
 
 

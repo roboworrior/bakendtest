@@ -89,7 +89,7 @@ app.get('/data', validateRequest, async (req, res) => {
 
 });
 
-app.get('/search', validateRequest, async (req, res) => {
+app.post('/search', validateRequest, async (req, res) => {
     try {
         const {input} = req.body;
 

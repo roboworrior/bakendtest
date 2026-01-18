@@ -91,7 +91,7 @@ app.get('/data', validateRequest, async (req, res) => {
 
 app.get('/search', validateRequest, async (req, res) => {
     try {
-        const { sinput} = req.body;
+        const {input} = req.body;
 
         const result = await pool.query('SELECT * FROM data where name like $1' ,[`%${sinput}%`]);
         res.json(result.rows);
